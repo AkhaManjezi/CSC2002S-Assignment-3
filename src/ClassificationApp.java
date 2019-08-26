@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.ForkJoinPool;
 
@@ -11,7 +13,7 @@ public class ClassificationApp {
         return (System.currentTimeMillis() - startTime) / 1000.0f;
     }
     static final ForkJoinPool fjPool = new ForkJoinPool();
-    static float sum(float[] arr){
+    static Vector sum(Vector[] arr){
         return fjPool.invoke(new SumArray(arr,0,arr.length));
     }
 
@@ -20,30 +22,43 @@ public class ClassificationApp {
 
     public static void main(String[] args) {
         getData();
+        tick();
         prevWindlin();
+        float time = tock();
+        System.out.println(time);
+        tick();
+        prevWindFJ();
+        time = tock();
+        System.out.println(time);
     }
 
     static void getData(){
         Scanner scan = new Scanner(System.in);
         String input = scan.next();
         data.readData(input);
-        data2.readData(input);
+    }
+
+    static void prevWindFJ(){
+        Vector wind = sum(data.linAdvection);
+        wind.x = (wind.x/data.dim());
+        wind.y = (wind.y/data.dim());
+        System.out.println(wind.x);
+        System.out.println(wind.y);
     }
 
     static void prevWindlin(){
-        Vector wind = new Vector();
-        float totalx = 0;
-        float totaly = 0;
+        Vector wind = new Vector(0,0);
         for (int i = 0; i < data.dimt; i++) {
             for (int j = 0; j < data.dimx; j++) {
                 for (int k = 0; k < data.dimy; k++) {
-                    totalx += data.advection[i][j][k].x;
-                    totaly += data.advection[i][j][k].y;
+                    wind.toAdd(data.advection[i][j][k]);
                 }
             }
         }
-        wind.x = (totalx/data.dimt)/(data.dimx+data.dimy);
-        wind.y = (totaly/data.dimt)/(data.dimx+data.dimy);
+        wind.x = (wind.x/data.dim());
+        wind.y = (wind.y/data.dim());
+        System.out.println(wind.x);
+        System.out.println(wind.y);
     }
 
 }

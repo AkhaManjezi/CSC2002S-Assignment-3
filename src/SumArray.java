@@ -1,35 +1,37 @@
 import java.util.concurrent.RecursiveTask;
 
-public class SumArray extends RecursiveTask<Integer>  {
+public class SumArray extends RecursiveTask<Vector>  {
 	  int lo; // arguments
 	  int hi;
-	  int[] arr;
-	  static final int SEQUENTIAL_CUTOFF=500;
+	  Vector[] arr;
+	  static final int SEQUENTIAL_CUTOFF=4000;
 
-	  int ans = 0; // result 
+	  Vector ans = new Vector(0,0); // result
 	    
-	  SumArray(int[] a, int l, int h) { 
+	  SumArray(Vector[] a, int l, int h) {
 	    lo=l; hi=h; arr=a;
 	  }
 
 
-	  protected Integer compute(){// return answer - instead of run
+	  protected Vector compute(){// return answer - instead of run
 		  if((hi-lo) < SEQUENTIAL_CUTOFF) {
-			  int ans = 0;
-		      for(int i=lo; i < hi; i++)
-		        ans += arr[i];
+			  Vector ans = new Vector(0,0);
+		      for(int i=lo; i < hi; i++) {
+				  ans.x += arr[i].x;
+				  ans.y += arr[i].y;
+			  }
 		      return ans;
 		  }
 		  else {
 			  SumArray left = new SumArray(arr,lo,(hi+lo)/2);
-			  SumArray right= new SumArray(arr,(hi+lo)/2,hi);
+			  SumArray right = new SumArray(arr,(hi+lo)/2,hi);
 			  
 			  // order of next 4 lines
 			  // essential – why?
 			  left.fork();
-			  int rightAns = right.compute();
-			  int leftAns  = left.join();
-			  return leftAns + rightAns;     
+			  Vector rightAns = right.compute();
+			  Vector leftAns  = left.join();
+			  return leftAns.combine(rightAns);
 		  }
 	 }
 }
