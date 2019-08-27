@@ -3,6 +3,8 @@ public class Vector {
     float y;
 
     public Vector() {
+        x =0;
+        y=0;
     }
 
     public Vector(float x, float y) {
@@ -15,12 +17,16 @@ public class Vector {
         y += toAdd.y;
     }
 
+    float mag(){
+        return (float)Math.sqrt(x*x + y*y);
+    }
+
     Vector combine(Vector toCombine){
         return new Vector(x+toCombine.x, y+toCombine.y);
     }
 
     @Override
     public String toString() {
-        return String.format("[%f,%f]",x, y);
+        return String.format("%.6f %.6f",x, y);
     }
 }
