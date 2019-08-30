@@ -68,48 +68,72 @@ public class ClassificationApp {
 
     static void localWindlin(){
         Vector[][][] localWind = new Vector[data.dimt][data.dimx][data.dimy];
+//        for (int i = 0; i < data.dimt; i++) {
+//            for (int j = 0; j < data.dimx; j++) {
+//                for (int k = 0; k < data.dimy; k++) {
+//                    int count = 1;
+//                    localWind[i][j][k] = new Vector();
+//                    localWind[i][j][k].toAdd(data.advection[i][j][k]);
+//                    if (j != 0){
+//                        localWind[i][j][k].toAdd(data.advection[i][j-1][k]);
+//                        count++;
+//                    }
+//                    if (k != 0){
+//                        localWind[i][j][k].toAdd(data.advection[i][j][k-1]);
+//                        count++;
+//                    }
+//                    if (j != 0 && k != 0){
+//                        localWind[i][j][k].toAdd(data.advection[i][j-1][k-1]);
+//                        count++;
+//                    }
+//                    if (j != data.dimx-1){
+//                        localWind[i][j][k].toAdd(data.advection[i][j+1][k]);
+//                        count++;
+//                    }
+//                    if (k != data.dimy-1){
+//                        localWind[i][j][k].toAdd(data.advection[i][j][k+1]);
+//                        count++;
+//                    }
+//                    if (j != data.dimx-1 && k != data.dimy-1){
+//                        localWind[i][j][k].toAdd(data.advection[i][j+1][k+1]);
+//                        count++;
+//                    }
+//
+//                    if (j != 0 && k != data.dimy-1){
+//                        localWind[i][j][k].toAdd(data.advection[i][j-1][k+1]);
+//                        count++;
+//                    }
+//                    if (k != 0 && j != data.dimx-1) {
+//                        localWind[i][j][k].toAdd(data.advection[i][j+1][k-1]);
+//                        count++;
+//                    }
+//
+//                    localWind[i][j][k].x = localWind[i][j][k].x/count;
+//                    localWind[i][j][k].y = localWind[i][j][k].y/count;
+//
+//                    if (Math.abs(data.convection[i][j][k]) > localWind[i][j][k].mag()){
+//                        data.classification[i][j][k] = 0;
+//                    }else if(localWind[i][j][k].mag() > 0.2){
+//                        data.classification[i][j][k] = 1;
+//                    }else{
+//                        data.classification[i][j][k] = 2;
+//                    }
+//                }
+//            }
+//        }
         for (int i = 0; i < data.dimt; i++) {
             for (int j = 0; j < data.dimx; j++) {
                 for (int k = 0; k < data.dimy; k++) {
-                    int count = 1;
                     localWind[i][j][k] = new Vector();
-                    localWind[i][j][k].toAdd(data.advection[i][j][k]);
-                    if (j != 0){
-                        localWind[i][j][k].toAdd(data.advection[i][j-1][k]);
-                        count++;
+                    int neighbours = 0;
+                    for (int l = Math.max(0, j-1); l < Math.min(data.dimx, j+2); l++) {
+                        for (int m = Math.max(0, k-1); m < Math.min(data.dimy, k+2); m++) {
+                            localWind[i][j][k].toAdd(data.advection[i][l][m]);
+                            neighbours++;
+                        }
                     }
-                    if (k != 0){
-                        localWind[i][j][k].toAdd(data.advection[i][j][k-1]);
-                        count++;
-                    }
-                    if (j != 0 && k != 0){
-                        localWind[i][j][k].toAdd(data.advection[i][j-1][k-1]);
-                        count++;
-                    }
-                    if (j != data.dimx-1){
-                        localWind[i][j][k].toAdd(data.advection[i][j+1][k]);
-                        count++;
-                    }
-                    if (k != data.dimy-1){
-                        localWind[i][j][k].toAdd(data.advection[i][j][k+1]);
-                        count++;
-                    }
-                    if (j != data.dimx-1 && k != data.dimy-1){
-                        localWind[i][j][k].toAdd(data.advection[i][j+1][k+1]);
-                        count++;
-                    }
-
-                    if (j != 0 && k != data.dimy-1){
-                        localWind[i][j][k].toAdd(data.advection[i][j-1][k+1]);
-                        count++;
-                    }
-                    if (k != 0 && j != data.dimx-1) {
-                        localWind[i][j][k].toAdd(data.advection[i][j+1][k-1]);
-                        count++;
-                    }
-
-                    localWind[i][j][k].x = localWind[i][j][k].x/count;
-                    localWind[i][j][k].y = localWind[i][j][k].y/count;
+                    localWind[i][j][k].x = localWind[i][j][k].x/neighbours;
+                    localWind[i][j][k].y = localWind[i][j][k].y/neighbours;
 
                     if (Math.abs(data.convection[i][j][k]) > localWind[i][j][k].mag()){
                         data.classification[i][j][k] = 0;
@@ -121,6 +145,8 @@ public class ClassificationApp {
                 }
             }
         }
+
+
         String output;
         for (int i = 0; i < data.dimt; i++) {
             output = "";
