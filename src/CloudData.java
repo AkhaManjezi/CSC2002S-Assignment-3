@@ -11,6 +11,7 @@ public class CloudData {
 	int [][][] classification; // cloud type per grid point, evolving over time
 	int dimx, dimy, dimt; // data dimensions
 	float [] linAdvection;
+	int[] linClassification;
 
 	// overall number of elements in the timeline grids
 	int dim(){
@@ -56,7 +57,8 @@ public class CloudData {
 					}
 			
 			classification = new int[dimt][dimx][dimy];
-			sc.close(); 
+			linClassification = new int[dim()];
+			sc.close();
 		} 
 		catch (IOException e){ 
 			System.out.println("Unable to open input file "+fileName);
