@@ -12,6 +12,7 @@ public class CloudData {
 	int dimx, dimy, dimt; // data dimensions
 	float [] linAdvection;
 	int[] linClassification;
+	Vector prevWind;
 
 	// overall number of elements in the timeline grids
 	int dim(){
@@ -58,6 +59,7 @@ public class CloudData {
 			
 			classification = new int[dimt][dimx][dimy];
 			linClassification = new int[dim()];
+			prevWind = new Vector(0,0,0);
 			sc.close();
 		} 
 		catch (IOException e){ 
