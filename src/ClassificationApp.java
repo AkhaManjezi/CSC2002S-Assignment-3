@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.ForkJoinPool;
 
@@ -13,29 +11,28 @@ public class ClassificationApp {
         return (System.currentTimeMillis() - startTime) / 1000.0f;
     }
     static final ForkJoinPool fjPool = new ForkJoinPool();
-    static Vector sum(Vector[] arr){
-        return fjPool.invoke(new SumArray(arr,0,arr.length));
-    }
-    static Vector sum2(float[] arr){
-        return fjPool.invoke(new SumLin(arr,0,arr.length));
+    static CloudData sum2(CloudData data){
+        return fjPool.invoke(new ParallelRun(data,0,data.linAdvection.length));
     }
 
     static CloudData data = new CloudData();
+    static CloudData data2;
 
     public static void main(String[] args) {
         getData();
-//        tick();
-//        prevWindlin();
-//        localWindlin();
-//        float time = tock();
+        data2 = data;
 
-        sequential();
+        tick();
+//        sequential();
+        float time = tock();
+        System.out.println(time);
 
-//        System.out.println(time);
-//        tick();
-//        prevWindFJ();
-//        time = tock();
-//        System.out.println(time);
+        System.out.println("");
+
+        tick();
+        parallel();
+        time = tock();
+        System.out.println(time);
     }
 
     static void getData(){
@@ -44,12 +41,32 @@ public class ClassificationApp {
         data.readData(input);
     }
 
+    static void parallel(){
+        CloudData output = sum2(data2);
+        System.out.println(String.format("%s %s %s", output.dimt, output.dimx, output.dimy));
+        output.prevWind = output.prevWind.getAverage();
+        System.out.println(output.prevWind.toString());
+//        String output2 = "";
+//        int count3 = 1;
+//        for (int i = 0; i < output.linClassification.length; i++) {
+//            output2 += output.linClassification[i] + "";
+//            if(count3 < output.dimx*data.dimy){
+//                output2 += " ";
+//            }else{
+//                output2 += "\n";
+//                count3=0;
+//            }
+//            count3++;
+//        }
+//        System.out.println(output2);
+    }
+
     static void prevWindFJ(){
-        Vector wind = sum2(data.linAdvection);
-        wind.x = (wind.x/data.dim());
-        wind.y = (wind.y/data.dim());
-        System.out.println(wind.x);
-        System.out.println(wind.y);
+//        Vector wind = sum2(data.linAdvection);
+//        wind.x = (wind.x/data.dim());
+//        wind.y = (wind.y/data.dim());
+//        System.out.println(wind.x);
+//        System.out.println(wind.y);
         
     }
 
@@ -57,6 +74,7 @@ public class ClassificationApp {
         Vector winds = new Vector();
         int classcount = 0;
         int at = 0;
+//        int at;
         int left = -3;
         int right = 3;
         int above = -data.dimx*3;
@@ -65,8 +83,8 @@ public class ClassificationApp {
         boolean aboveleft, aboveright, bottomleft,bottomright;
         Vector wind2 = new Vector(0,0,0);
         for (int i = 0; i < data.linAdvection.length; i+=3) {
+            at = wind2.n%(data.dimy*data.dimx);
             wind2.toAdd(new Vector(data.linAdvection[i], data.linAdvection[i+1],1));
-
             x = i;
             y = i + 1;
             u = i + 2;
@@ -155,10 +173,10 @@ public class ClassificationApp {
                     winds.n++;
                 }
             }
-            at+=1;
-            if(at == data.dimx*data.dimy){
-                at = 0;
-            }
+//            at+=1;
+//            if(at == data.dimx*data.dimy){
+//                at = 0;
+//            }
             
             Vector wind = winds.getAverage();
 
@@ -178,19 +196,20 @@ public class ClassificationApp {
         System.out.println(String.format("%s %s %s", data.dimt, data.dimx, data.dimy));
         wind2 = wind2.getAverage();
         System.out.println(wind2.toString());
-        String output2 = "";
-        int count3 = 1;
-        for (int i = 0; i < data.linClassification.length; i++) {
-            output2 += data.linClassification[i] + "";
-            if(count3 < data.dimx*data.dimy){
-                output2 += " ";
-            }else{
-                output2 += "\n";
-                count3=0;
-            }
-            count3++;
-        }
-        System.out.println(output2);
+//        String output2 = "";
+//        int count3 = 1;
+//        for (int i = 0; i < data.linClassification.length; i++) {
+//            output2 += data.linClassification[i] + "";
+//            if(count3 < data.dimx*data.dimy){
+//                output2 += " ";
+//            }else{
+//                System.out.println(output2);
+//                output2 = "";
+//                count3=0;
+//            }
+//            count3++;
+//        }
+////        System.out.println(output2);
     }
     
 
