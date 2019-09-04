@@ -18,7 +18,7 @@ public class Vector {
     void toAdd(Vector toAdd){
         x += toAdd.x;
         y += toAdd.y;
-        n++;
+        n += toAdd.n;
     }
 
     float mag(){
