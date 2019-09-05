@@ -12,7 +12,7 @@ public class Vector {
     public Vector(float x, float y, int n) {
         this.x = x;
         this.y = y;
-        n = n;
+        this.n = n;
     }
 
     void toAdd(Vector toAdd){
@@ -36,6 +36,6 @@ public class Vector {
 
     @Override
     public String toString() {
-        return String.format("%.6f %.6f",x, y);
+        return String.format("%f %f",x, y);
     }
 }
