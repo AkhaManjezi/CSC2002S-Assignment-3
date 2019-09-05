@@ -6,94 +6,79 @@ import java.io.PrintWriter;
 
 public class CloudData {
 
-	Vector [][][] advection; // in-plane regular grid of wind vectors, that evolve over time
-	float [][][] convection; // vertical air movement strength, that evolves over time
-	int [][][] classification; // cloud type per grid point, evolving over time
-	int dimx, dimy, dimt; // data dimensions
-	float [] linAdvection;
-	int[] linClassification;
-	Vector prevWind;
+    int dimx, dimy, dimt; // data dimensions
+    float[] linAdvection;
+    int[] linClassification;
 
-	// overall number of elements in the timeline grids
-	int dim(){
-		return dimt*dimx*dimy;
-	}
-	
-	// convert linear position into 3D location in simulation grid
-	void locate(int pos, int [] ind)
-	{
-		ind[0] = (int) pos / (dimx*dimy); // t
-		ind[1] = (pos % (dimx*dimy)) / dimy; // x
-		ind[2] = pos % (dimy); // y
-	}
-	
-	// read cloud simulation data from file
-	void readData(String fileName){ 
-		try{ 
-			Scanner sc = new Scanner(new File(fileName), "UTF-8");
-			
-			// input grid dimensions and simulation duration in timesteps
-			dimt = sc.nextInt();
-			dimx = sc.nextInt(); 
-			dimy = sc.nextInt();
-			
-			// initialize and load advection (wind direction and strength) and convection
-			advection = new Vector[dimt][dimx][dimy];
-			convection = new float[dimt][dimx][dimy];
-			linAdvection = new float[dim()*3];
-			int count = 0;
-			for(int t = 0; t < dimt; t++)
-				for(int x = 0; x < dimx; x++)
-					for(int y = 0; y < dimy; y++){
-						advection[t][x][y] = new Vector();
-						float xval = sc.nextFloat();
-						float yval = sc.nextFloat();
-						float uval = sc.nextFloat();
-						advection[t][x][y].x = xval;
-						advection[t][x][y].y = yval;
-						convection[t][x][y] = uval;
-						linAdvection[count++] = xval;
-						linAdvection[count++] = yval;
-						linAdvection[count++] = uval;
-					}
-			
-			classification = new int[dimt][dimx][dimy];
-			linClassification = new int[dim()];
-			prevWind = new Vector(0,0,0);
-			sc.close();
-		} 
-		catch (IOException e){ 
-			System.out.println("Unable to open input file "+fileName);
-			e.printStackTrace();
-		}
-		catch (java.util.InputMismatchException e){ 
-			System.out.println("Malformed input file "+fileName);
-			e.printStackTrace();
-		}
-	}
-	
-	// write classification output to file
-	void writeData(String fileName, Vector wind){
-		 try{ 
-			 FileWriter fileWriter = new FileWriter(fileName);
-			 PrintWriter printWriter = new PrintWriter(fileWriter);
-			 printWriter.printf("%d %d %d\n", dimt, dimx, dimy);
-			 printWriter.printf("%f %f\n", wind.x, wind.y);
-			 
-			 for(int t = 0; t < dimt; t++){
-				 for(int x = 0; x < dimx; x++){
-					for(int y = 0; y < dimy; y++){
-						printWriter.printf("%d ", classification[t][x][y]);
-					}
-				 }
-				 printWriter.printf("\n");
-		     }
-				 
-			 printWriter.close();
-		 }
-		 catch (IOException e){
-			 System.out.println("Unable to open output file "+fileName);
-				e.printStackTrace();
-		 }
-	}
+    // overall number of elements in the timeline grids
+    int dim() {
+        return dimt * dimx * dimy;
+    }
+
+    // convert linear position into 3D location in simulation grid
+    void locate(int pos, int[] ind) {
+        ind[0] = (int) pos / (dimx * dimy); // t
+        ind[1] = (pos % (dimx * dimy)) / dimy; // x
+        ind[2] = pos % (dimy); // y
+    }
+
+    // read cloud simulation data from file
+    void readData(String fileName) {
+        try {
+            Scanner sc = new Scanner(new File(fileName), "UTF-8");
+
+            // input grid dimensions and simulation duration in timesteps
+            dimt = sc.nextInt();
+            dimx = sc.nextInt();
+            dimy = sc.nextInt();
+
+            // initialize and load advection (wind direction and strength) and convection
+            linAdvection = new float[dim() * 3];
+            int count = 0;
+            for (int t = 0; t < dimt; t++)
+                for (int x = 0; x < dimx; x++)
+                    for (int y = 0; y < dimy; y++) {
+                        linAdvection[count++] = sc.nextFloat();
+                        linAdvection[count++] = sc.nextFloat();
+                        linAdvection[count++] = sc.nextFloat();
+                    }
+            linClassification = new int[dim()];
+            sc.close();
+        } catch (IOException e) {
+            System.out.println("Unable to open input file " + fileName);
+            e.printStackTrace();
+        } catch (java.util.InputMismatchException e) {
+            System.out.println("Malformed input file " + fileName);
+            e.printStackTrace();
+        }
+    }
+
+    // write classification output to file
+    void writeData(String fileName, Vector wind) {
+        try {
+            FileWriter fileWriter = new FileWriter(fileName);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            printWriter.printf("%d %d %d\n", dimt, dimx, dimy);
+            printWriter.printf("%f %f\n", wind.x, wind.y);
+
+            String output2 = "";
+            int count3 = 1;
+            for (int i = 0; i < linClassification.length; i++) {
+                output2 += linClassification[i] + "";
+                if (count3 < dimx * dimy) {
+                    output2 += " ";
+                } else {
+                    printWriter.println(output2);
+                    output2 = "";
+                    count3 = 0;
+                }
+                count3++;
+            }
+
+            printWriter.close();
+        } catch (IOException e) {
+            System.out.println("Unable to open output file " + fileName);
+            e.printStackTrace();
+        }
+    }
 }
