@@ -16,49 +16,33 @@ public class ClassificationApp {
     }
 
     static CloudData data = new CloudData();
-    static CloudData data2;
+    static OutputObject output;
+    static Vector wind2;
+    static String outputFile;
 
     public static void main(String[] args) {
         getData();
-        data2 = data;
-
-        tick();
-        sequential();
-        float time = tock();
-        System.out.println(time);
-
-        System.out.println("");
-
-        tick();
         parallel();
-        time = tock();
-        System.out.println(time);
+//        sequential();
+        output.data.writeData("parallel.txt", output.wind);
     }
 
     static void getData(){
         Scanner scan = new Scanner(System.in);
-        String input = scan.next();
-        data.readData(input);
+        String inputFile = scan.next();
+        outputFile = scan.next();
+        if(!inputFile.endsWith(".txt")){
+            inputFile += ".txt";
+        }
+        if(!outputFile.endsWith(".txt")){
+            outputFile += ".txt";
+        }
+        data.readData(inputFile);
     }
 
     static void parallel(){
-        OutputObject output = sum2(data2);
-        System.out.println(String.format("%s %s %s", output.data.dimt, output.data.dimx, output.data.dimy));
-        output.wind = output.wind.getAverage();;
-        System.out.println(output.wind.toString());
-        String output2 = "";
-        int count3 = 1;
-        for (int i = 0; i < data2.linClassification.length; i++) {
-            output2 += data2.linClassification[i] + "";
-            if(count3 < data2.dimx*data2.dimy){
-                output2 += " ";
-            }else{
-                System.out.println(output2);
-                output2 = "";
-                count3=0;
-            }
-            count3++;
-        }
+        output = sum2(data);
+        output.wind = output.wind.getAverage();
     }
 
 
@@ -73,7 +57,7 @@ public class ClassificationApp {
         int bottom = data.dimx*3;
         int x, y, u;
         boolean aboveleft, aboveright, bottomleft,bottomright;
-        Vector wind2 = new Vector(0,0,0);
+        wind2 = new Vector(0,0,0);
         for (int i = 0; i < data.linAdvection.length; i+=3) {
             at = wind2.n%(data.dimy*data.dimx);
             wind2.toAdd(new Vector(data.linAdvection[i], data.linAdvection[i+1],1));
@@ -165,10 +149,6 @@ public class ClassificationApp {
                     winds.n++;
                 }
             }
-//            at+=1;
-//            if(at == data.dimx*data.dimy){
-//                at = 0;
-//            }
             
             Vector wind = winds.getAverage();
 
@@ -185,22 +165,8 @@ public class ClassificationApp {
             winds.y = 0;
 
         }
-        System.out.println(String.format("%s %s %s", data.dimt, data.dimx, data.dimy));
         wind2 = wind2.getAverage();
-        System.out.println(wind2.toString());
-        String output2 = "";
-        int count3 = 1;
-        for (int i = 0; i < data.linClassification.length; i++) {
-            output2 += data.linClassification[i] + "";
-            if(count3 < data.dimx*data.dimy){
-                output2 += " ";
-            }else{
-                System.out.println(output2);
-                output2 = "";
-                count3=0;
-            }
-            count3++;
-        }
+
     }
 
 
