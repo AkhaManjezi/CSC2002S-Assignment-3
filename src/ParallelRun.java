@@ -3,7 +3,7 @@ import java.util.concurrent.RecursiveTask;
 public class ParallelRun extends RecursiveTask<OutputObject> {
     int lo; // arguments
     int hi;
-    static final int SEQUENTIAL_CUTOFF = 3000;
+    static final int SEQUENTIAL_CUTOFF = 1000000;
     int divpoint;
     CloudData data;
 
@@ -16,7 +16,7 @@ public class ParallelRun extends RecursiveTask<OutputObject> {
     protected OutputObject compute() {// return answer - instead of run
         if ((hi - lo) < SEQUENTIAL_CUTOFF) {
             Vector winds = new Vector();
-            int classcount = lo % 3;
+            int classcount = lo / 3;
             int at = lo / 3;
             at = at % (data.dimx * data.dimy);
             int left = -3;
