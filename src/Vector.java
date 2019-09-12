@@ -4,9 +4,9 @@ public class Vector {
     int n;
 
     public Vector() {
-        x =0;
-        y=0;
-        n=0;
+        x = 0;
+        y = 0;
+        n = 0;
     }
 
     public Vector(float x, float y, int n) {
@@ -15,27 +15,27 @@ public class Vector {
         this.n = n;
     }
 
-    void toAdd(Vector toAdd){
+    void toAdd(Vector toAdd) {
         x += toAdd.x;
         y += toAdd.y;
         n += toAdd.n;
     }
 
-    float mag(){
-        return (float)Math.sqrt(x*x + y*y);
+    float mag() {
+        return (float) Math.sqrt(x * x + y * y);
     }
 
-    Vector combine(Vector toCombine){
-        Vector created = new Vector(x+toCombine.x, y+toCombine.y, n+toCombine.n);
+    Vector combine(Vector toCombine) {
+        Vector created = new Vector(x + toCombine.x, y + toCombine.y, n + toCombine.n);
         return created;
     }
 
-    Vector getAverage(){
-        return new Vector(x/n, y/n,1);
+    Vector getAverage() {
+        return new Vector(x / n, y / n, 1);
     }
 
     @Override
     public String toString() {
-        return String.format("%f %f",x, y);
+        return String.format("%f %f", x, y);
     }
 }

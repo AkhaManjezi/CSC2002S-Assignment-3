@@ -6,9 +6,8 @@ public class ParallelRunTest extends RecursiveTask<OutputObject> {
 
     int divpoint;
     CloudData data;
-//    static final int SEQUENTIAL_CUTOFF = 1000000;
-//    ParallelRun(CloudData data, int l, int h) {
     int SEQUENTIAL_CUTOFF;
+
     ParallelRunTest(CloudData data, int l, int h, int c) {
         SEQUENTIAL_CUTOFF = c;
         lo = l;
@@ -150,13 +149,9 @@ public class ParallelRunTest extends RecursiveTask<OutputObject> {
             while ((divpoint) % 3 != 0) {
                 divpoint++;
             }
-//            ParallelRun left = new ParallelRun(data, lo, divpoint);
-//            ParallelRun right = new ParallelRun(data, divpoint, hi);
-            ParallelRunTest left = new ParallelRunTest(data, lo, divpoint,SEQUENTIAL_CUTOFF);
-            ParallelRunTest right = new ParallelRunTest(data, divpoint, hi,SEQUENTIAL_CUTOFF);
-//
-            // order of next 4 lines
-            // essential – why?
+            ParallelRunTest left = new ParallelRunTest(data, lo, divpoint, SEQUENTIAL_CUTOFF);
+            ParallelRunTest right = new ParallelRunTest(data, divpoint, hi, SEQUENTIAL_CUTOFF);
+
             left.fork();
             OutputObject rightAns = right.compute();
             OutputObject leftAns = left.join();

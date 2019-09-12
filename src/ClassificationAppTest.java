@@ -25,77 +25,70 @@ public class ClassificationAppTest {
     static OutputObject output;
     static Vector wind2;
 
+    /**
+     * main method of program to automatically test values with certain sequential cutoffs
+     * @param args
+     */
     public static void main(String[] args) {
         float time;
-        String[] files = new String[]{"10x512x512.txt","20x512x512.txt" ,"20x1024x1024.txt","15x512x512.txt",  "40x512x512.txt"};
-        
-        int[][] cutoff = new int[][]{{0,10000,100000,110000,120000,130000,140000,150000,160000,170000,180000,190000,200000,210000,220000,230000,240000,242000,244000,245000,246000,248000,250000,291000,500000,874000,1000000,1500000,4000000,10000000},{0,10000,100000,250000,300000,350000,400000,450000,463000,475000,488000,490000,492500,495000,497500,500000,583000,1000000,1500000,1750000,7500000,10000000,10000000,12500000,15000000},{0,10000,100000,250000,500000,1000000,1500000,1750000,1800000,1900000,1925000,1950000,1955000,1960000,1962500,1965000,1967500,1970000,1975000,2000000,2250000,2330000,2500000,5000000,7500000,10000000,12500000,15000000,16990000,17500000,20000000,30000000,45000000},{0,10000,100000,250000,437000,500000,983000,1000000,1310000,1500000,1970000},{0,10000,100000,250000,500000,1000000,1170000,1500000,2620000,3500000,5240000}};
-        
+
+        //Replace with string array of textfiles of choice
+        String[] files = new String[]{"10x512x512.txt", "20x512x512.txt", "20x1024x1024.txt", "15x512x512.txt", "40x512x512.txt"};
+
+        //2D array containing sequential cutoffs to be tested for each textfile
+        int[][] cutoff = new int[][]{
+                {0, 10000, 100000, 110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000, 210000, 220000, 230000, 240000, 242000, 244000, 245000, 246000, 248000, 250000, 291000, 500000, 874000, 1000000, 1500000, 4000000, 10000000},
+                {0, 10000, 100000, 250000, 300000, 350000, 400000, 450000, 463000, 475000, 488000, 490000, 492500, 495000, 497500, 500000, 583000, 1000000, 1500000, 1750000, 7500000, 10000000, 10000000, 12500000, 15000000},
+                {0, 10000, 100000, 250000, 500000, 1000000, 1500000, 1750000, 1800000, 1900000, 1925000, 1950000, 1955000, 1960000, 1962500, 1965000, 1967500, 1970000, 1975000, 2000000, 2250000, 2330000, 2500000, 5000000, 7500000, 10000000, 12500000, 15000000, 16990000, 17500000, 20000000, 30000000, 45000000},
+                {0, 10000, 100000, 250000, 437000, 500000, 983000, 1000000, 1310000, 1500000, 1970000},
+                {0, 10000, 100000, 250000, 500000, 1000000, 1170000, 1500000, 2620000, 3500000, 5240000}
+        };
+
+        //Loops through files and cutoffs to perform tests
         for (int j = 0; j < files.length; j++) {
             getData(files[j]);
             data2 = data;
-            System.out.println(files[j]+" got");
+            System.out.println(files[j] + " got");
             try {
-                FileWriter fileWriter = new FileWriter("out"+files[j],true);
+                FileWriter fileWriter = new FileWriter("out" + files[j], true);
                 PrintWriter printWriter = new PrintWriter(fileWriter);
-            for(int c : cutoff[j]) {
-                printWriter.print(c+",");
-                
-                for (int i = 0; i < 13; i++) {
-                    
-                    if(c==0){
-                        tick();
-                        sequential();
-                        time = tock();
-                    }else{
-                        tick();
-                        parallel(c); 
-                        time = tock();
+                for (int c : cutoff[j]) {
+                    printWriter.print(c + ",");
+
+                    for (int i = 0; i < 13; i++) {
+
+                        if (c == 0) {
+                            tick();
+                            sequential();
+                            time = tock();
+                        } else {
+                            tick();
+                            parallel(c);
+                            time = tock();
+                        }
+
+                        printWriter.printf("%f,", time);
+                        printWriter.flush();
+                        System.gc();
                     }
-                    
-                    printWriter.printf("%f,",time);
-                    printWriter.flush();
-                    System.gc();
+                    printWriter.print("\n");
                 }
-                printWriter.print("\n");
-            }
                 printWriter.close();
             } catch (IOException e) {
-                System.out.println("Unable to open output file " +files[j] +".txt");
+                System.out.println("Unable to open output file " + files[j] + ".txt");
                 e.printStackTrace();
             }
         }
-//        output.data.writeData("parallel.txt", output.wind);
     }
 
     static void getData(String args) {
-//        Scanner scan = new Scanner(System.in);
         String input = args;
         data.readData(input);
     }
 
     static void parallel(int c) {
         output = sum2(data2, c);
-//        System.out.println(String.format("%s %s %s", output.data.dimt, output.data.dimx, output.data.dimy));
         output.wind = output.wind.getAverage();
-        ;
-//        System.out.println(output.wind.toString());
-
-//        output.data.writeData("parallel,txt", output.wind);
-
-//        String output2 = "";
-//        int count3 = 1;
-//        for (int i = 0; i < data2.linClassification.length; i++) {
-//            output2 += data2.linClassification[i] + "";
-//            if(count3 < data2.dimx*data2.dimy){
-//                output2 += " ";
-//            }else{
-//                System.out.println(output2);
-//                output2 = "";
-//                count3=0;
-//            }
-//            count3++;
-//        }
     }
 
 
@@ -103,7 +96,6 @@ public class ClassificationAppTest {
         Vector winds = new Vector();
         int classcount = 0;
         int at = 0;
-//        int at;
         int left = -3;
         int right = 3;
         int above = -data.dimx * 3;

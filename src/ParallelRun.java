@@ -148,9 +148,7 @@ public class ParallelRun extends RecursiveTask<OutputObject> {
             }
             ParallelRun left = new ParallelRun(data, lo, divpoint);
             ParallelRun right = new ParallelRun(data, divpoint, hi);
-//
-            // order of next 4 lines
-            // essential – why?
+
             left.fork();
             OutputObject rightAns = right.compute();
             OutputObject leftAns = left.join();
